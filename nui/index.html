@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+<head>
+    <meta charset="UTF-8" />
+    <title>AdminSuite Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Core layout & typography -->
+    <link rel="stylesheet" href="./css/main.css" />
+
+    <!-- Theme tokens -->
+    <link rel="stylesheet" href="./css/theme_dark.css" />
+    <link rel="stylesheet" href="./css/theme_light.css" />
+
+    <!-- Reports-specific styling -->
+    <link rel="stylesheet" href="./css/reports.css" />
+</head>
+
+<body class="theme-dark" data-panel-open="false">
+    <div id="adminsuite-root" class="as-root hidden">
+
+        <!-- Sidebar Navigation -->
+        <aside class="as-nav">
+            <div class="as-nav__brand">
+                <img src="./img/adminsuite_logo.png" alt="AdminSuite Logo" class="as-nav__logo" />
+                <div class="as-nav__title">
+                    <span class="as-nav__name">AdminSuite</span>
+                    <span class="as-nav__subtitle">QBCore Administration</span>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="as-nav__menu">
+
+                <!-- 📊 DASHBOARD -->
+                <div class="as-nav__section">Dashboard</div>
+
+                <button data-view="dashboard" class="as-nav__item as-nav__item--active">
+                    <!-- layout-dashboard -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="9"></rect>
+                        <rect x="14" y="3" width="7" height="5"></rect>
+                        <rect x="14" y="12" width="7" height="9"></rect>
+                        <rect x="3" y="16" width="7" height="5"></rect>
+                    </svg>
+                    <span class="as-nav__label">Dashboard</span>
+                </button>
+
+
+                <!-- 🛠️ MODERATION -->
+                <div class="as-nav__section">Moderation</div>
+
+                <button data-view="moderation" class="as-nav__item">
+                    <!-- shield -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span class="as-nav__label">Player Moderation</span>
+                </button>
+
+                <button data-view="adminchat" class="as-nav__item">
+                    <!-- messages-square -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span class="as-nav__label">Admin Chat</span>
+                </button>
+
+                <button data-view="reports" class="as-nav__item">
+                    <!-- file-warning -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16l4-4h10a2 2 0 0 0 2-2V7.5z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span class="as-nav__label">Reports</span>
+                </button>
+
+
+                <!-- 👤 PLAYER ADMIN -->
+                <div class="as-nav__section">Player Admin</div>
+
+                <button data-view="discipline" class="as-nav__item">
+                    <!-- gavel -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m14 14 6 6"></path>
+                        <path d="m4 4 6 6"></path>
+                        <path d="m12 12 8-8"></path>
+                        <path d="M2 20h12"></path>
+                    </svg>
+                    <span class="as-nav__label">Discipline</span>
+                </button>
+
+                <button data-view="bannedplayers" class="as-nav__item">
+                    <!-- user-x -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d="M6 21v-2a6 6 0 0 1 12 0v2"></path>
+                        <line x1="15" y1="9" x2="21" y2="3"></line>
+                        <line x1="21" y1="9" x2="15" y2="3"></line>
+                    </svg>
+                    <span class="as-nav__label">Banned Players</span>
+                </button>
+
+                <button data-view="settings" class="as-nav__item">
+                    <!-- user-cog -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d="M5.5 21v-1a6.5 6.5 0 0 1 13 0v1"></path>
+                        <circle cx="19" cy="12" r="2"></circle>
+                        <path d="M19 10v-1"></path>
+                        <path d="M19 14v1"></path>
+                        <path d="M21 12h1"></path>
+                        <path d="M17 12h-1"></path>
+                    </svg>
+                    <span class="as-nav__label">Player Settings</span>
+                </button>
+
+
+                <!-- 🌎 WORLD & GAME -->
+                <div class="as-nav__section">World & Game</div>
+
+                <button data-view="vehicles" class="as-nav__item">
+                    <!-- car -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 16h14l1-5-2-3H6L4 11z"></path>
+                        <circle cx="7" cy="16" r="2"></circle>
+                        <circle cx="17" cy="16" r="2"></circle>
+                    </svg>
+                    <span class="as-nav__label">Vehicles</span>
+                </button>
+
+                <button data-view="items" class="as-nav__item">
+                    <!-- package-search -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m14.5 14.5 5 5"></path>
+                        <circle cx="11" cy="11" r="4"></circle>
+                        <path d="M7.5 4.27 12 2l4.5 2.27"></path>
+                        <path d="M2 7l10 5 10-5"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                    </svg>
+                    <span class="as-nav__label">Items</span>
+                </button>
+
+                <button data-view="world" class="as-nav__item">
+                    <!-- globe -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"></path>
+                    </svg>
+                    <span class="as-nav__label">World Controls</span>
+                </button>
+
+                <button data-view="resources" class="as-nav__item">
+                    <!-- server -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="8" rx="2"></rect>
+                        <rect x="2" y="13" width="20" height="8" rx="2"></rect>
+                        <line x1="6" y1="7" x2="6.01" y2="7"></line>
+                        <line x1="6" y1="17" x2="6.01" y2="17"></line>
+                    </svg>
+                    <span class="as-nav__label">Resources</span>
+                </button>
+
+
+                <!-- 📂 INTEGRATIONS -->
+                <div class="as-nav__section">Integrations</div>
+
+                <button data-view="docs" class="as-nav__item">
+                    <!-- file-text -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span class="as-nav__label">Google Docs</span>
+                </button>
+
+
+                <!-- ⚙️ SYSTEM -->
+                <div class="as-nav__section">System</div>
+
+                <button data-view="adminsettings" class="as-nav__item">
+                    <!-- settings -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06
+                            a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33
+                            1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09
+                            a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06
+                            a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82v-.09
+                            a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
+                            a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06
+                            a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09
+                            a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09
+                            a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06
+                            a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09
+                            a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+                            a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                    <span class="as-nav__label">Admin Settings</span>
+                </button>
+
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="as-nav__footer">
+                <button id="as-panel-close" class="as-nav__close">
+                    Close
+                </button>
+            </div>
+        </aside>
+
+
+        <!-- Main Shell -->
+        <div class="as-shell">
+
+            <!-- Header -->
+            <header class="as-header">
+                <div class="as-header__left">
+                    <span class="as-header__context" id="as-header-context">Dashboard</span>
+                    <span class="as-header__divider">•</span>
+                    <span class="as-header__subtitle">Administration & Moderation Suite</span>
+                </div>
+
+                <div class="as-header__right">
+                    <div class="as-header__stat">
+                        <span class="as-header__stat-label">Players</span>
+                        <span class="as-header__stat-value" id="as-header-players">0 / 0</span>
+                    </div>
+                    <div class="as-header__stat">
+                        <span class="as-header__stat-label">Online Staff</span>
+                        <span class="as-header__stat-value" id="as-header-staff">0</span>
+                    </div>
+                    <div class="as-header__stat">
+                        <span class="as-header__stat-label">Open Reports</span>
+                        <span class="as-header__stat-value" id="as-header-reports">0</span>
+                    </div>
+
+                    <div class="as-header__controls">
+                        <button id="as-theme-toggle" class="as-chip">Theme</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Main Panel -->
+            <main class="as-main" id="as-main"></main>
+
+            <!-- Footer -->
+            <footer class="as-footer">
+                <div class="as-footer__left">
+                    © 2025 AdminSuite Design · All rights reserved
+                </div>
+            </footer>
+        </div>
+    </div>
+
+
+    <!-- Player /report overlay -->
+    <div id="as-player-report-overlay" class="as-player-report-overlay hidden">
+        <div class="as-player-report-dialog">
+
+            <header class="as-player-report-header">
+                <img src="./img/adminsuite_report_logo.png" alt="AdminSuite Report" class="as-player-report-logo" />
+                <div class="as-player-report-title">
+                    <h2>Submit a Report</h2>
+                    <p>Please describe the issue so staff can assist you.</p>
+                </div>
+            </header>
+
+            <main class="as-player-report-body">
+                <div class="as-form-group">
+                    <label for="as-player-report-subject">Subject</label>
+                    <input id="as-player-report-subject" type="text" maxlength="120"
+                        placeholder="Short summary (e.g. RDM at Legion Square)" />
+                </div>
+
+                <div class="as-form-group">
+                    <label for="as-player-report-description">Description</label>
+                    <textarea id="as-player-report-description" rows="5" maxlength="1024"
+                        placeholder="Describe what happened, including player names/IDs and context."></textarea>
+                </div>
+
+                <div class="as-form-group">
+                    <span class="as-form-label">Report type</span>
+                    <div class="as-radio-row">
+                        <label class="as-radio">
+                            <input type="radio" name="as-player-report-type" value="general" checked />
+                            <span>General</span>
+                        </label>
+                        <label class="as-radio">
+                            <input type="radio" name="as-player-report-type" value="player" />
+                            <span>Player Report</span>
+                        </label>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="as-player-report-footer">
+                <button id="as-player-report-cancel" class="as-btn as-btn--ghost">Cancel</button>
+                <button id="as-player-report-submit" class="as-btn as-btn--primary">Submit</button>
+            </footer>
+
+        </div>
+    </div>
+
+
+    <!-- JS Includes -->
+    <script src="./js/utils.js"></script>
+    <script src="./js/router.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/moderation.js"></script>
+    <script src="./js/discipline.js"></script>
+    <script src="./js/bannedplayers.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/reports.js"></script>
+    <script src="./js/google_docs.js"></script>
+    <script src="./js/audit.js"></script>
+    <script src="./js/vehicles.js"></script>
+    <script src="./js/items.js"></script>
+    <script src="./js/resources.js"></script>
+    <script src="./js/admin_settings.js"></script>
+    <script src="./js/main.js"></script>
+
+</body>
+</html>

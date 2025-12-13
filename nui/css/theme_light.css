@@ -1,0 +1,47 @@
+body.theme-light {
+    /* Root backgrounds */
+    --as-bg: #f4f4f7;
+    --as-bg-elevated: #f9fafb;
+
+    /* Big background gradients used by main.css */
+    --as-body-bg: radial-gradient(circle at top left, #fefce8 0, #f4f4f7 35%, #e5e7eb 90%);
+    --as-root-bg: linear-gradient(135deg, #f9fafb, #eef2ff, #e0f2fe);
+    --as-shell-bg: linear-gradient(135deg, #e5e7eb, #f9fafb);
+    --as-nav-bg: #ffffff;
+    --as-header-bg: linear-gradient(135deg, #f9fafb, #e0f2fe);
+    --as-footer-bg: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+
+    /* Card / surface styling */
+    --as-card-bg: rgba(255, 255, 255, 0.96);
+    --as-card-border: rgba(15, 23, 42, 0.08);
+    --as-card-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+
+    /* Text colors */
+    --as-text: #111827;
+    --as-text-muted: rgba(55, 65, 81, 0.86);
+
+    /* Accent colors */
+    --as-accent: #f97316;
+    --as-accent-soft: #38bdf8;
+
+    
+
+    /* Accent colors (rgb helpers for older CEF) */
+    --as-accent-rgb: 249, 115, 22;
+    --as-accent-soft-rgb: 56, 189, 248;
+/* Borders */
+    --as-border-subtle: rgba(15, 23, 42, 0.08);
+
+    /* Inputs / chips / subtle fills */
+    --as-input-bg: rgba(249, 250, 251, 0.96);
+    --as-input-border: rgba(148, 163, 184, 0.6);
+    --as-pill-bg: rgba(249, 250, 251, 0.92);
+
+    /* Scrollbar */
+    --as-scrollbar-track: rgba(229, 231, 235, 0.95);
+    --as-scrollbar-thumb: rgba(148, 163, 184, 0.9);
+
+    /* Watermark – light version of your logo/background */
+    --as-watermark-image: url("../img/light_bg.png");
+    --as-watermark-opacity: 0.10;
+}

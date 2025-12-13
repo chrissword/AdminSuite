@@ -1,0 +1,2199 @@
+/* =========================================================
+   AdminSuite NUI – Vibrant Modern Overhaul
+   - Dark neon dashboard aesthetic
+   - Glassy cards, gradients, and soft glows
+   - All class names preserved for compatibility
+   ======================================================= */
+
+/* Core reset & typography */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+}
+
+body {
+    overflow: hidden;
+    color: var(--as-text, #f8fafc);
+    background: var(
+        --as-body-bg,
+        radial-gradient(circle at top left, #0b1020 0, #020314 40%, #000000 100%)
+    );
+}
+
+/* Root container (hidden until as:nui:panel:open) */
+
+.as-root {
+    position: absolute;
+    inset: 3vh 3vw;
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    background: var(
+        --as-root-bg,
+        radial-gradient(
+            circle at top left,
+            rgba(30, 64, 175, 0.18),
+            rgba(8, 47, 73, 0.26),
+            rgba(15, 23, 42, 0.96)
+        )
+    );
+    border-radius: 20px;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(148, 163, 184, 0.15);
+    overflow: hidden;
+    opacity: 1;
+    transition:
+        opacity 160ms ease-out,
+        transform 160ms ease-out,
+        box-shadow 160ms ease-out;
+    transform: translateY(0);
+}
+
+.as-root.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(25px);
+    box-shadow: none;
+}
+
+/* =========================================
+ * Global toast / notification
+ * =======================================*/
+
+.as-toast-root {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Base toast – bright pill with glow */
+
+.as-toast {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 160px;
+    max-width: 280px;
+    padding: 5px 16px;
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #22c55e, #a3e635, #facc15);
+    color: #020617;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.45),
+        0 14px 40px rgba(22, 163, 74, 0.55);
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: as-toast-in 160ms ease-out forwards;
+}
+
+body.theme-light .as-toast {
+    color: #1f2933;
+}
+
+/* Error toast variant */
+
+.as-toast--error {
+    background: linear-gradient(135deg, #ef4444, #f97316, #fbbf24);
+    color: #020617;
+    box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.5),
+        0 16px 44px rgba(248, 113, 113, 0.6);
+}
+
+.as-toast__icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.as-toast__icon img {
+    width: 32px;
+    height: 32px;
+    display: block;
+    filter: drop-shadow(0 0 5px rgba(15, 23, 42, 0.6));
+}
+
+.as-toast__text {
+    text-align: center;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    line-height: 1.35;
+}
+
+.as-toast--hide {
+    animation: as-toast-out 180ms ease-in forwards;
+}
+
+@keyframes as-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes as-toast-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* =========================================
+ * Navigation
+ * =======================================*/
+
+.as-nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(
+        --as-nav-bg,
+        radial-gradient(circle at top, #020617 0, #020617 30%, #020617 100%)
+    );
+    border-right: 1px solid rgba(148, 163, 184, 0.25);
+    padding: 16px 14px;
+    color: var(--as-text, #e5e7eb);
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+/* =========================================
+ * Settings View – accent palette swatches
+ * =======================================*/
+
+/* Prevent the left label/help text from collapsing into a skinny column */
+.as-settings-row-text {
+    min-width: 260px; /* bump to 280/300 if you still see wrapping */
+}
+
+/* Make sure words wrap normally (not per-letter) */
+.as-settings-row-label,
+.as-settings-row-help {
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: normal;
+}
+
+/* Palette: grid that wraps cleanly */
+.as-settings-palette {
+    display: grid;
+    grid-template-columns: repeat(7, max-content); /* 4 across */
+    gap: 6px;
+    justify-content: end;
+}
+
+
+
+.as-nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.as-nav__logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    border-radius: 14px;
+    padding: 6px;
+    background: radial-gradient(circle at 30% 0, #f97316 0, #ea580c 40%, #0f172a 100%);
+    box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.8),
+        0 10px 24px rgba(248, 113, 22, 0.66);
+}
+
+.as-nav__title {
+    display: flex;
+    flex-direction: column;
+}
+
+.as-nav__name {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    /* was: color: #f97316; */
+    color: var(--as-accent, #f97316);
+
+    /* keep glow, but tie it to the accent too */
+    text-shadow: 0 0 18px rgba(var(--as-accent-rgb), 0.55);
+}
+
+
+.as-nav__subtitle {
+    font-size: 11px;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+/* Nav menu */
+
+.as-nav__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+/* Navigation section headers (for categorized sidebar) */
+.as-nav__section {
+    margin: 14px 0 4px;
+    padding-left: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(148, 163, 184, 0.6);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+
+.as-nav__item {
+    border: none;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.85);
+    color: rgba(148, 163, 184, 0.95);
+    text-align: left;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    transition:
+        background 140ms ease-out,
+        color 120ms ease-out,
+        transform 90ms ease-out,
+        box-shadow 140ms ease-out;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
+}
+
+.as-nav__item:hover {
+    background: radial-gradient(
+        circle at 0 0,
+        rgba(56, 189, 248, 0.12),
+        rgba(15, 23, 42, 0.98)
+    );
+    color: #e5e7eb;
+    transform: translateX(2px) translateY(-1px);
+    box-shadow:
+        0 10px 24px rgba(15, 23, 42, 0.85),
+        0 0 18px rgba(59, 130, 246, 0.4);
+}
+
+.as-nav__item--active {
+    background: linear-gradient(120deg, var(--as-accent-soft, #38bdf8), var(--as-accent, #f97316), var(--as-accent-soft, #38bdf8));
+    color: #020617;
+    box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.4),
+        0 16px 40px rgba(56, 189, 248, 0.55);
+}
+
+.as-nav__item--disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.as-nav__item--disabled:hover {
+    background: rgba(15, 23, 42, 0.85);
+    color: rgba(148, 163, 184, 0.9);
+    transform: none;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
+}
+
+.as-nav__label {
+    flex: 1;
+}
+
+/* Nav footer + Close button */
+
+.as-nav__footer {
+    margin-top: 16px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(51, 65, 85, 0.85);
+}
+
+.as-nav__close {
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 9px 10px;
+    background: radial-gradient(
+        circle at 0 0,
+        rgba(248, 113, 22, 0.4),
+        rgba(15, 23, 42, 0.95)
+    );
+    color: #f9fafb;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition:
+        background 150ms ease-out,
+        transform 90ms ease-out,
+        box-shadow 160ms ease-out;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.8);
+}
+
+.as-nav__close:hover {
+    background: radial-gradient(
+        circle at 0 0,
+        rgba(248, 113, 22, 0.7),
+        rgba(15, 23, 42, 1)
+    );
+    transform: translateY(-1px);
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.9),
+        0 0 20px rgba(248, 113, 22, 0.7);
+}
+
+/* =========================================
+ * Shell (header + main + footer)
+ * =======================================*/
+
+.as-shell {
+    display: grid;
+    grid-template-rows: 62px minmax(0, 1fr) 30px;
+    background: var(
+        --as-shell-bg,
+        radial-gradient(
+            circle at top right,
+            rgba(56, 189, 248, 0.15),
+            rgba(15, 23, 42, 1)
+        )
+    );
+}
+
+/* =========================================
+ * Header
+ * =======================================*/
+
+.as-header {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    background: var(
+        --as-header-bg,
+        radial-gradient(
+            circle at top right,
+            rgba(56, 189, 248, 0.2),
+            rgba(15, 23, 42, 0.96)
+        )
+    );
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    color: var(--as-text, #e5e7eb);
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.95),
+        0 0 18px rgba(56, 189, 248, 0.3);
+}
+
+.as-header__left {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: rgba(248, 250, 252, 0.92);
+}
+
+.as-header__context {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.as-header__subtitle {
+    font-size: 12px;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+.as-header__divider {
+    color: rgba(148, 163, 184, 0.6);
+}
+
+.as-header__right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.as-header__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.as-header__stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+.as-header__stat-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.as-header__controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* =========================================
+ * Quick Actions layout
+ * =======================================*/
+
+.as-grid.as-qa-grid {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.as-grid.as-qa-grid > div {
+    width: 100%;
+}
+
+/* Chips inside the QA grid */
+.as-grid.as-qa-grid .as-chip {
+    margin-right: 8px;
+    margin-bottom: 6px;
+    min-width: 110px;
+    padding: 7px 18px;
+    font-size: 12px;
+    text-align: center;
+    justify-content: center;
+    text-transform: none;
+    letter-spacing: 0.03em;
+    border-radius: 12px;
+}
+
+/* =========================================
+ * Chips / buttons
+ * =======================================*/
+
+.as-chip,
+.as-btn {
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    padding: 5px 13px;
+    font-size: 12px;
+    background: rgba(15, 23, 42, 0.9);
+    color: rgba(226, 232, 240, 0.95);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    white-space: nowrap;
+    transition:
+        background 140ms ease-out,
+        border-color 140ms ease-out,
+        color 140ms ease-out,
+        transform 90ms ease-out,
+        box-shadow 140ms ease-out;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.9);
+}
+
+/* World Controls – make Apply buttons match Player Moderation / Quick Actions font */
+#as-world-time-apply,
+#as-world-weather-apply {
+    font-size: 12px;
+    text-transform: none;
+    letter-spacing: 0.03em;
+}
+
+.as-chip:hover,
+.as-btn:hover {
+    background: radial-gradient(
+        circle at 0 0,
+        rgba(59, 130, 246, 0.25),
+        rgba(15, 23, 42, 1)
+    );
+    border-color: rgba(96, 165, 250, 0.9);
+    color: #f9fafb;
+    transform: translateY(-1px);
+    box-shadow:
+        0 10px 24px rgba(15, 23, 42, 0.95),
+        0 0 16px rgba(96, 165, 250, 0.5);
+}
+
+.as-chip:active,
+.as-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.8);
+}
+
+/* Group-specific quick actions / tabs */
+
+.as-chip--self,
+.as-chip--dev,
+.as-chip--mgmt,
+.as-btn--self,
+.as-btn--dev,
+.as-btn--mgmt {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.5);
+    color: rgba(226, 232, 240, 0.95);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.9);
+}
+
+/* Light theme quick action chips */
+body.theme-light .as-chip--self,
+body.theme-light .as-chip--dev,
+body.theme-light .as-chip--mgmt,
+body.theme-light .as-btn--self,
+body.theme-light .as-btn--dev,
+body.theme-light .as-btn--mgmt {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(24, 23, 19, 0.15);
+    color: #18181b;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1);
+}
+
+/* Management actions: tie styling to user accent palette */
+.as-btn--mgmt {
+    background: linear-gradient(
+        120deg,
+        var(--as-accent, #f97316),
+        var(--as-accent-soft, #38bdf8)
+    );
+    border-color: rgba(15, 23, 42, 0.35);
+    color: #020617;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.65);
+}
+
+.as-btn--mgmt:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+}
+
+
+/* Tabs */
+
+.as-chip--tab {
+    background: rgba(15, 23, 42, 0.92);
+    border-color: rgba(148, 163, 184, 0.55);
+    color: rgba(226, 232, 240, 0.9);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+    padding: 6px 18px;
+    min-width: 110px;
+    justify-content: center;
+}
+
+.as-chip--tab:hover {
+    background: radial-gradient(
+        circle at 0 0,
+        rgba(96, 165, 250, 0.2),
+        rgba(15, 23, 42, 1)
+    );
+    border-color: rgba(96, 165, 250, 0.9);
+}
+
+.as-qa-tab--active {
+    background: linear-gradient(120deg, var(--as-accent-soft, #38bdf8), var(--as-accent, #f97316), var(--as-accent-soft, #38bdf8));
+    border-color: rgba(15, 23, 42, 0.9);
+    color: #020617;
+    box-shadow:
+        0 10px 24px rgba(15, 23, 42, 0.9),
+        0 0 22px rgba(59, 130, 246, 0.6);
+}
+
+/* "Copied!" state */
+
+.as-chip--copied,
+.as-btn--copied {
+    background: linear-gradient(135deg, #2dd4bf, #a5b4fc);
+    border-color: transparent;
+    color: #020617;
+    box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.7),
+        0 10px 22px rgba(45, 212, 191, 0.85);
+    transform: translateY(-1px);
+}
+
+/* Danger variant */
+
+.as-chip--danger,
+.as-btn--danger {
+    border-color: rgba(248, 113, 113, 0.95);
+    background: rgba(248, 113, 113, 0.1);
+    color: #fecaca;
+}
+
+.as-chip--danger:hover,
+.as-btn--danger:hover {
+    background: rgba(248, 113, 113, 0.25);
+}
+
+/* Warning variant – used for "Starting… / Stopping… / Restarting…" */
+.as-chip--warning,
+.as-btn--warning {
+    border-color: rgba(250, 204, 21, 0.9);
+    background: rgba(250, 204, 21, 0.12);
+    color: #facc15;
+}
+
+/* Spinner + subtle pulse on warning chips */
+.as-chip--warning {
+    position: relative;
+    animation: as-chip-pulse 1.3s ease-in-out infinite;
+}
+
+.as-chip--warning::before {
+    content: "";
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    display: inline-block;
+    margin-right: 0.1rem;
+    animation: as-chip-spinner 0.7s linear infinite;
+    opacity: 0.9;
+}
+
+/* Spinner rotation */
+@keyframes as-chip-spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Soft pulsing glow for in-progress warning state */
+@keyframes as-chip-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.35);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(250, 204, 21, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(250, 204, 21, 0);
+    }
+}
+
+/* =========================================
+ * Player Moderation – Actions
+ * =======================================*/
+
+.as-moderation__group {
+    margin-bottom: 12px;
+}
+
+.as-moderation__group-title {
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0.03em;
+    color: rgba(148, 163, 184, 0.9);
+    margin-bottom: 4px;
+}
+
+.as-moderation__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* =========================================
+ * Player Moderation – Buttons
+ * =======================================*/
+
+/* Moderation buttons are literally chips, just using the wider sizing */
+.as-moderation__actions .as-btn {
+    min-width: 110px;
+    padding: 7px 18px;
+    font-size: 12px;
+    justify-content: center;
+    text-transform: none;
+    letter-spacing: 0.03em;
+}
+
+/* =========================================
+ * Main view
+ * =======================================*/
+
+.as-main {
+    position: relative;
+    padding: 16px;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+/* Watermark layer – now a soft radial glow behind content */
+.as-main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 10% 0, rgba(59, 130, 246, 0.25), transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(248, 113, 22, 0.25), transparent 55%);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Actual content above glow */
+.as-main > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Scrollable card grid container inside each view */
+
+.as-view {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    padding-right: 6px;
+}
+
+.as-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 12px;
+}
+
+/* Cards – glassmorphism style */
+
+.as-card {
+    border-radius: 14px;
+    padding: 12px;
+    background: linear-gradient(
+        145deg,
+        rgba(15, 23, 42, 0.96),
+        rgba(15, 23, 42, 0.92)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.95),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    color: var(--as-text, #e5e7eb);
+    backdrop-filter: blur(18px);
+}
+
+.as-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.as-card__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f9fafb;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.as-card__subtitle {
+    font-size: 11px;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+.as-card__body {
+    font-size: 12px;
+    color: rgba(226, 232, 240, 0.94);
+}
+
+/* Simple table */
+
+.as-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.as-table thead tr {
+    background: rgba(15, 23, 42, 0.98);
+}
+
+.as-table th,
+.as-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.85);
+    text-align: left;
+}
+
+.as-table th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+/* Staff row highlight */
+
+.as-row--staff,
+.as-table__row--staff {
+    font-weight: 600;
+    background: rgba(30, 64, 175, 0.28);
+}
+
+/* =========================================
+ * Footer
+ * =======================================*/
+
+.as-footer {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(
+        --as-footer-bg,
+        radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 1))
+    );
+    color: rgba(148, 163, 184, 0.95);
+    padding: 0 12px;
+    font-size: 11px;
+    border-top: 1px solid rgba(30, 64, 175, 0.6);
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Hide right-side footer tags */
+.as-footer__right {
+    display: none;
+}
+
+.as-footer__tag {
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(248, 113, 22, 0.18);
+    border: 1px solid rgba(248, 113, 22, 0.8);
+    color: #fed7aa;
+    font-size: 10px;
+}
+
+/* =========================================
+ * Utility
+ * =======================================*/
+
+.as-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    color: rgba(226, 232, 240, 0.95);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.as-metric-box {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: radial-gradient(
+        circle at top,
+        rgba(56, 189, 248, 0.14),
+        rgba(15, 23, 42, 0.9)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.9);
+}
+
+.theme-light .as-metric-box {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.as-metric-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.as-metric-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Hide elements filtered by RBAC */
+.as-hidden-rbac {
+    display: none !important;
+}
+
+/* Generic hide helper used by JS (e.g., resources empty-state) */
+.as-hidden {
+    display: none !important;
+}
+
+/* Shared empty-state styling */
+.as-empty {
+    margin-top: 8px;
+    font-size: 12px;
+    color: rgba(148, 163, 184, 0.9);
+    text-align: center;
+}
+
+/* =========================================
+ * Inventory Overlay
+ * =======================================*/
+
+.as-inventory-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.98));
+    z-index: 500;
+}
+
+.as-inventory-overlay--hidden {
+    display: none;
+}
+
+.as-inventory-window {
+    width: min(800px, 100%);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.as-inventory-table-wrap {
+    max-height: 52vh;
+    overflow-y: auto;
+}
+
+.as-inventory-toolbar {
+    margin-bottom: 8px;
+}
+
+/* =========================================
+ * Spectate floating overlay (mini HUD)
+ * =======================================*/
+
+.as-spectate-overlay {
+    position: fixed;
+    left: 50%;
+    bottom: 6%;
+    transform: translateX(-50%);
+    z-index: 9000;
+    pointer-events: none;
+    font-family: inherit;
+}
+
+.as-spectate-overlay--hidden {
+    display: none;
+}
+
+.as-spectate-card {
+    pointer-events: auto;
+    min-width: 260px;
+    max-width: 320px;
+    padding: 10px 24px 12px;
+    background: radial-gradient(
+        circle at 0 0,
+        rgba(248, 113, 22, 0.35),
+        rgba(15, 23, 42, 0.98)
+    );
+    border: 1px solid #f97316;
+    color: #f9fafb;
+    font-size: 12px;
+    box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.9),
+        0 16px 40px rgba(15, 23, 42, 0.95),
+        0 0 18px rgba(248, 113, 22, 0.7);
+}
+
+.as-spectate-lines {
+    text-align: center;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.as-spectate-hint {
+    display: block;
+    opacity: 0.9;
+}
+
+.as-spectate-main {
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.as-spectate-label {
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+.as-spectate-name {
+    color: #facc15;
+    font-weight: 600;
+}
+
+.as-spectate-divider {
+    height: 1px;
+    background: rgba(249, 250, 251, 0.35);
+    margin: 4px 0 6px;
+}
+
+.as-spectate-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.as-spectate-action-btn {
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    padding: 0 4px;
+    margin: 0 2px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.as-spectate-action-btn:hover {
+    opacity: 0.9;
+}
+
+.as-spectate-action-btn--primary {
+    border-bottom: 1px solid #f9fafb;
+    padding-bottom: 1px;
+}
+
+.as-spectate-overlay.as-spectate-overlay--cursor .as-spectate-card {
+    box-shadow:
+        0 0 10px rgba(248, 113, 22, 0.9),
+        0 16px 40px rgba(15, 23, 42, 0.98);
+}
+
+/* =========================================
+ * Basic responsiveness
+ * =======================================*/
+
+@media (max-width: 1280px) {
+    .as-root {
+        inset: 2vh 2vw;
+    }
+
+    .as-nav {
+        display: none;
+    }
+
+    .as-shell {
+        grid-template-rows: 60px minmax(0, 1fr) 30px;
+    }
+}
+
+/* =========================================
+ * Light-theme specific tweaks
+ * =======================================*/
+
+body.theme-light
+    .as-chip:not(.as-chip--self):not(.as-chip--dev):not(.as-chip--mgmt):not(.as-chip--danger):not(
+        .as-chip--copied
+    ):not(.as-chip--warning),
+body.theme-light
+    .as-btn:not(.as-btn--self):not(.as-btn--dev):not(.as-btn--mgmt):not(.as-btn--danger):not(
+        .as-btn--copied
+    ) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(24, 23, 19, 0.15);
+    color: #18181b;
+}
+
+body.theme-light .as-chip--warning,
+body.theme-light .as-btn--warning {
+    background: rgba(250, 204, 21, 0.16);
+    border-color: rgba(234, 179, 8, 0.9);
+    color: #854d0e;
+}
+
+body.theme-light
+    .as-chip--tab:not(.as-chip--self):not(.as-chip--dev):not(.as-chip--mgmt) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(24, 23, 19, 0.18);
+    color: rgba(24, 23, 19, 0.86);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14);
+}
+
+body.theme-light .as-chip--tab:hover {
+    background: rgba(250, 137, 3, 0.12);
+    border-color: #f97316;
+    color: #18181b;
+}
+
+body.theme-light .as-qa-tab--active {
+    background: linear-gradient(120deg, var(--as-accent-soft, #38bdf8), var(--as-accent, #f97316), var(--as-accent-soft, #38bdf8));
+    border-color: rgba(15, 23, 42, 0.15);
+    color: #020617;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.25);
+}
+
+/* Overall text color in shell when light theme is active */
+body.theme-light .as-shell,
+body.theme-light .as-header,
+body.theme-light .as-footer,
+body.theme-light .as-main,
+body.theme-light .as-nav {
+    color: var(--as-text, #111827);
+}
+
+/* Header text */
+body.theme-light .as-header__left,
+body.theme-light .as-header__context,
+body.theme-light .as-header__stat-value {
+    color: var(--as-text, #111827);
+}
+
+body.theme-light .as-header__subtitle,
+body.theme-light .as-header__stat-label,
+body.theme-light .as-header__divider {
+    color: var(--as-text-muted, rgba(55, 65, 81, 0.86));
+}
+
+/* Footer text */
+body.theme-light .as-footer {
+    color: var(--as-text-muted, rgba(55, 65, 81, 0.86));
+}
+
+/* NAV: background + items + close button */
+body.theme-light .as-nav {
+    background: var(--as-nav-bg, #ffffff);
+    border-right-color: rgba(148, 163, 184, 0.45);
+}
+
+body.theme-light .as-nav__name {
+    color: var(--as-accent, #f97316);
+    text-shadow: none;
+}
+
+body.theme-light .as-nav__subtitle {
+    color: var(--as-text-muted, rgba(55, 65, 81, 0.86));
+}
+
+body.theme-light .as-nav__item {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--as-text-muted, rgba(55, 65, 81, 0.9));
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+body.theme-light .as-nav__item:hover {
+    background: rgba(249, 250, 251, 0.96);
+    color: var(--as-text, #111827);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16);
+    transform: translateX(2px) translateY(-1px);
+}
+
+body.theme-light .as-nav__item--active {
+    background: linear-gradient(120deg, #fee2e2, #fef3c7, #e0f2fe);
+    color: var(--as-text, #111827);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+}
+
+body.theme-light .as-nav__close {
+    background: linear-gradient(135deg, #f97316, #fed7aa);
+    color: #111827;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+    border: 1px solid rgba(248, 113, 22, 0.6);
+}
+
+/* CARDS: light surfaces + dark text */
+body.theme-light .as-card {
+    background: var(--as-card-bg, rgba(255, 255, 255, 0.96));
+    border-color: var(--as-card-border, rgba(15, 23, 42, 0.08));
+    box-shadow: var(--as-card-shadow, 0 18px 40px rgba(15, 23, 42, 0.08));
+    color: var(--as-text, #111827);
+}
+
+body.theme-light .as-card__title {
+    color: var(--as-text, #111827);
+}
+
+body.theme-light .as-card__subtitle {
+    color: var(--as-text-muted, rgba(55, 65, 81, 0.86));
+}
+
+body.theme-light .as-card__body {
+    color: rgba(31, 41, 55, 0.95);
+}
+
+/* Make main text inside view match dark text */
+body.theme-light .as-view {
+    color: var(--as-text, #111827);
+}
+
+/* Spectate card text */
+body.theme-light .as-spectate-card {
+    color: var(--as-text, #111827);
+}
+
+/* Inventory overlay window text */
+body.theme-light .as-inventory-window {
+    color: var(--as-text, #111827);
+}
+
+/* =========================================
+ * Admin Chat view (two-card layout)
+ * =======================================*/
+
+/* Layout: stack messages card above composer, both hugging the footer */
+.as-grid.as-grid--adminchat {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 12px;
+    height: 100%;
+}
+
+/* Admin chat cards span full width */
+.as-adminchat-card {
+    max-width: 100%;
+}
+
+/* Taller messages card (about 40% of screen height) */
+.as-adminchat-card--messages {
+    flex: 0 0 40vh; /* height of the chat window */
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Composer card sits directly above footer */
+.as-adminchat-card--composer {
+    flex: 0 0 auto;
+    margin-top: auto; /* pushes this card down toward the footer */
+}
+
+/* Vertical layout inside messages card */
+.as-adminchat-body-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* Messages area – fills the card and scrolls when full */
+.as-adminchat-messages,
+#as-adminchat-messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 8px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    overflow-y: auto; /* scrollbar lives here */
+}
+
+/* Light theme variant */
+body.theme-light .as-adminchat-messages,
+body.theme-light #as-adminchat-messages {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(148, 163, 184, 0.45);
+}
+
+/* List of individual messages */
+.as-adminchat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Single message bubble */
+.as-adminchat-message {
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.9);
+    color: #e5e7eb;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.8);
+}
+
+/* Light theme message bubble */
+body.theme-light .as-adminchat-message {
+    background: rgba(249, 250, 251, 0.98);
+    color: #111827;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
+}
+
+.as-adminchat-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11px;
+    color: var(--as-text-muted, rgba(148, 163, 184, 0.9));
+    margin-bottom: 2px;
+}
+
+.as-adminchat-author {
+    font-weight: 600;
+}
+
+.as-adminchat-time {
+    opacity: 0.8;
+}
+
+.as-adminchat-body,
+.as-adminchat-body-text {
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Composer card content */
+.as-adminchat-composer {
+    border-top: 1px solid var(--as-border-subtle, rgba(148, 163, 184, 0.45));
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.as-adminchat-composer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.as-adminchat-composer-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--as-text, #e5e7eb);
+}
+
+body.theme-light .as-adminchat-composer-title {
+    color: var(--as-text, #111827);
+}
+
+.as-adminchat-hint,
+.as-adminchat-helper {
+    font-size: 11px;
+    color: var(--as-text-muted, rgba(148, 163, 184, 0.9));
+}
+
+/* Textarea input */
+.as-adminchat-input {
+    width: 100%;
+    min-height: 52px;
+    max-height: 160px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--as-input-border, rgba(148, 163, 184, 0.6));
+    background: var(--as-input-bg, rgba(15, 23, 42, 0.9));
+    color: var(--as-text, #e5e7eb);
+    resize: vertical;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+body.theme-light .as-adminchat-input {
+    background: var(--as-input-bg, #f9fafb);
+    color: var(--as-text, #111827);
+}
+
+.as-adminchat-input:focus {
+    outline: none;
+    border-color: var(--as-accent, #f97316);
+    box-shadow: 0 0 0 1px var(--as-accent, #f97316);
+}
+
+/* Footer row: helper + Send button */
+.as-adminchat-composer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* =========================================
+ * Google Docs Layout – vertical stack
+ * =======================================*/
+
+.as-docs-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+/* Documents card just sizes to its content */
+.as-docs-list-card {
+    flex: 0 0 auto;
+}
+
+/* Preview card grows to fill remaining height */
+.as-docs-preview-card {
+    flex: 1 1 auto;
+    min-height: 260px;
+}
+
+/* Make the preview body and iframe fill the card */
+.as-docs-preview-body {
+    height: 100%;
+    padding: 0;
+}
+
+.as-docs-preview-body #as-docs-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* =======================================
+   Audit Log view – scrollable list
+   Matches Admin Chat behavior
+   ======================================= */
+
+/* Make the audit card body scroll instead of growing forever */
+#as-audit-list {
+    max-height: 360px; /* adjust this taller/shorter if you like */
+    overflow-y: auto;
+    padding-right: 4px; /* small gutter so the scrollbar doesn't overlay text */
+}
+
+/* Layout for the list wrapper */
+.as-audit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Each audit entry "row" */
+.as-audit-item {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.75);
+}
+
+/* Light theme variant */
+body.theme-light .as-audit-item {
+    background: rgba(248, 250, 252, 0.96);
+    border-color: rgba(148, 163, 184, 0.45);
+}
+
+/* Top line (label + timestamp) */
+.as-audit-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+/* Human-readable label */
+.as-audit-label {
+    font-weight: 500;
+    font-size: 12px;
+}
+
+/* Timestamp / meta info */
+.as-audit-meta {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+/* Pretty-printed JSON payload */
+.as-audit-payload {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    word-break: break-word;
+    opacity: 0.9;
+}
+
+/* =========================================
+ * Vehicles View
+ * ======================================= */
+
+.as-view--vehicles .as-card--vehicles {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    background: rgba(15, 23, 42, 0.96);
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.65);
+}
+
+.as-view--vehicles .as-card__header--vehicles {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    gap: 12px;
+}
+
+.as-view--vehicles .as-card__header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.as-view--vehicles .as-card__header-tools {
+    flex: 0 0 260px;
+}
+
+.as-view--vehicles .as-vehicles-layout {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 10px 12px 12px;
+    gap: 12px;
+}
+
+/* Left side: list area */
+.as-view--vehicles .as-vehicles-list {
+    flex: 1 1 55%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column; /* list + pagination stacked vertically */
+}
+
+/* Table wrapper (no internal scroll – pagination handles large lists) */
+.as-view--vehicles .as-vehicles-list-inner {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(30, 64, 175, 0.55);
+    background: radial-gradient(
+        circle at top left,
+        rgba(30, 64, 175, 0.45),
+        rgba(15, 23, 42, 0.96)
+    );
+}
+
+.as-view--vehicles .as-vehicles-table {
+    width: 100%;
+}
+
+.as-view--vehicles .as-vehicles-cell--model code {
+    font-size: 11px;
+}
+
+.as-view--vehicles .as-vehicles-name {
+    display: flex;
+    flex-direction: column;
+}
+
+.as-view--vehicles .as-vehicles-name__label {
+    font-weight: 600;
+}
+
+.as-view--vehicles .as-vehicles-name__brand {
+    font-size: 11px;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+/* Pagination row under the table */
+.as-view--vehicles .as-vehicles-pagination {
+    margin-top: 6px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 12px;
+}
+
+.as-view--vehicles .as-vehicles-pagination-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.as-view--vehicles .as-vehicles-page-label {
+    opacity: 0.85;
+}
+
+.as-view--vehicles .as-vehicles-page-btn[disabled] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.as-view--vehicles .as-vehicles-row--selected {
+    background: rgba(30, 64, 175, 0.35);
+}
+
+/* Right side: preview card */
+.as-view--vehicles .as-vehicles-preview {
+    flex: 1 1 45%;
+    min-width: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: radial-gradient(
+        circle at bottom right,
+        rgba(59, 130, 246, 0.35),
+        rgba(15, 23, 42, 0.96)
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+}
+
+.as-vehicles-preview__empty {
+    font-size: 13px;
+    color: rgba(148, 163, 184, 0.9);
+    text-align: center;
+}
+
+.as-vehicles-preview-card {
+    display: flex;
+    gap: 14px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.as-vehicles-preview-image-wrap {
+    flex: 0 0 160px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.as-vehicles-preview-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Hidden-image state used when images are disabled via Settings */
+.as-vehicles-preview-image-wrap--hidden {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.85);
+}
+
+.as-vehicles-preview-image-placeholder {
+    padding: 8px 10px;
+    font-size: 11px;
+    text-align: center;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+.as-vehicles-preview-meta {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.as-vehicles-preview-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.as-vehicles-preview-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.as-vehicles-preview-brand {
+    font-size: 12px;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+.as-vehicles-preview-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.as-vehicles-preview-model {
+    font-size: 12px;
+    color: rgba(226, 232, 240, 0.95);
+}
+
+.as-vehicles-preview-actions {
+    margin-top: auto;
+}
+
+.as-tag {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.as-tag--muted {
+    opacity: 0.9;
+}
+
+.as-vehicles-empty {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+/* ================================
+   ITEMS VIEW – layout + pagination
+   ================================ */
+
+.as-view--items .as-section-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* Left: items table */
+.as-view--items .as-table-container {
+    flex: 1 1 65%;
+    min-width: 0;
+}
+
+/* Right: target player panel */
+.as-view--items .as-details-container {
+    flex: 1 1 35%;
+    min-width: 260px;
+    max-width: 420px;
+}
+
+/* Pagination bar under the table */
+.as-view--items #as-items-pagination {
+    margin-top: 10px;
+}
+
+.as-view--items .as-pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.as-view--items .as-page-label {
+    opacity: 0.85;
+}
+
+/* Disable state for Prev/Next */
+.as-view--items .as-pagination .as-btn[disabled] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* Reuse Vehicles pagination styling */
+.as-view--items .as-vehicles-pagination-inner {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.as-view--items .as-vehicles-page-label {
+    opacity: 0.85;
+}
+
+.as-view--items .as-vehicles-page-btn[disabled] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* Items list – icon sizing override */
+
+.as-item-icon {
+    width: 32px; /* adjust to taste: 32, 40, 48, etc. */
+    height: 32px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Make sure the image fits inside the box */
+.as-item-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* or "cover" if you want it cropped to fill */
+    display: block;
+}
+
+/* Keep placeholder same size as real icons */
+.as-item-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+/* =========================================
+ * Settings View – toggles / slider switches
+ * =======================================*/
+
+.as-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.as-settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Each row: text on the left, toggle on the right */
+.as-settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 0;
+}
+
+/* Left-hand text block */
+.as-settings-row-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.as-settings-row-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--as-text, #e5e7eb);
+}
+
+.as-settings-row-help {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--as-text-muted, rgba(148, 163, 184, 0.9));
+}
+
+/* Right-hand toggle container */
+.as-settings-row-control {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Prevent the left label/help text from collapsing into a skinny column */
+.as-settings-row-text{
+  min-width: 260px;  /* increase if you want */
+}
+
+/* Make sure words wrap normally (not per-letter) */
+.as-settings-row-label,
+.as-settings-row-help{
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: normal;
+}
+
+
+/* =========================================
+ * Settings View – accent palette swatches
+ * =======================================*/
+
+/* Accent palette: 2-row grid, aligned to the right */
+.as-settings-palette{
+  display: grid;
+  grid-template-columns: repeat(7, max-content); /* auto adjusts */
+  gap: 6px;
+  justify-content: end;
+}
+
+
+.as-palette-swatch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--as-border-subtle, rgba(148, 163, 184, 0.25));
+    background: var(--as-pill-bg, rgba(15, 23, 42, 0.95));
+    cursor: pointer;
+    transition: transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.as-palette-swatch:hover {
+    transform: translateY(-1px);
+    border-color: rgba(148, 163, 184, 0.45);
+}
+
+.as-palette-swatch--active {
+    border-color: var(--as-accent, #f97316);
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.18);
+}
+
+.as-palette-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+/* Light theme text tweaks */
+body.theme-light .as-settings-row-label {
+    color: var(--as-text, #111827);
+}
+
+body.theme-light .as-settings-row-help {
+    color: var(--as-text-muted, rgba(55, 65, 81, 0.86));
+}
+
+/* Slider toggle bound to the real <input type="checkbox"> */
+
+.as-toggle {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Hide the native checkbox but keep it clickable */
+.as-toggle input[type="checkbox"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Track */
+.as-toggle__slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+    transition:
+        background 150ms ease-out,
+        border-color 150ms ease-out,
+        box-shadow 150ms ease-out;
+}
+
+/* Thumb */
+.as-toggle__slider::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.7);
+    transition:
+        transform 150ms ease-out,
+        background 150ms ease-out;
+}
+
+/* ON state – when checkbox is checked */
+.as-toggle input[type="checkbox"]:checked + .as-toggle__slider {
+    background: linear-gradient(120deg, #22c55e, #38bdf8);
+    border-color: transparent;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+}
+
+.as-toggle input[type="checkbox"]:checked + .as-toggle__slider::before {
+    transform: translateX(18px);
+    background: #f9fafb;
+}
+
+/* Light theme tweak */
+body.theme-light .as-toggle__slider {
+    background: rgba(243, 244, 246, 0.9);
+    border-color: rgba(148, 163, 184, 0.7);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+ * Compact Mode & UI Scale hooks
+ * =======================================*/
+
+/* UI scale – body[data-ui-scale="…"] is set by JS */
+
+body[data-ui-scale="small"] {
+    font-size: 12px;
+}
+
+body[data-ui-scale="large"] {
+    font-size: 16px;
+}
+
+/* Compact mode – body.as-compact toggled by JS */
+
+body.as-compact .as-root {
+    inset: 2vh 2vw;
+}
+
+body.as-compact .as-card {
+    padding: 8px;
+}
+
+body.as-compact .as-grid {
+    gap: 8px;
+}
+
+body.as-compact .as-header {
+    padding: 0 12px;
+}
+
+body.as-compact .as-main {
+    padding: 10px;
+}
+
+body.as-compact .as-footer {
+    padding: 0 8px;
+}
+
+body.as-compact .as-nav {
+    padding: 12px 10px;
+}
+
+body.as-compact .as-nav__item {
+    padding: 6px 8px;
+    font-size: 12px;
+}
+
+body.as-compact .as-chip,
+body.as-compact .as-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+}
+
+/* =========================================================
+   BOLD SHELL TINT (Header / Left Nav / Footer)
+   Paste at END of nui/css/main.css
+   Requires: --as-accent-rgb like "0, 160, 255"
+   ========================================================= */
+
+/* Make sure these containers can host overlays */
+.as-header,
+.as-nav,
+.as-footer {
+  position: relative;
+  overflow: hidden; /* keeps overlay inside the bar/panel */
+}
+
+/* HEADER: strong, obvious tint */
+.as-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--as-accent-rgb), 0.42) 0%,
+      rgba(var(--as-accent-rgb), 0.26) 45%,
+      rgba(var(--as-accent-rgb), 0.16) 100%
+    );
+}
+
+/* LEFT NAV: strong tint with a slightly deeper bottom */
+.as-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--as-accent-rgb), 0.34) 0%,
+      rgba(var(--as-accent-rgb), 0.22) 50%,
+      rgba(var(--as-accent-rgb), 0.14) 100%
+    );
+}
+
+/* FOOTER: bold but a bit lighter so text stays clean */
+.as-footer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--as-accent-rgb), 0.28) 0%,
+      rgba(var(--as-accent-rgb), 0.18) 55%,
+      rgba(var(--as-accent-rgb), 0.12) 100%
+    );
+}
+
+/* Ensure real content sits ABOVE the tint overlays */
+.as-header > *,
+.as-nav > *,
+.as-footer > * {
+  position: relative;
+  z-index: 1;
+}

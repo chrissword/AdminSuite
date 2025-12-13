@@ -1,0 +1,508 @@
+/*========================================
+  Reports View – Staff UI
+  - Hybrid two-panel layout (list + details)
+  - Dark theme, ember/flame accents
+========================================*/
+
+/* Header card enforces dark visual & strong contrast */
+
+.as-view--reports .as-card--reports-header {
+    background: #1d2022;
+    border: 1px solid rgba(250, 137, 3, 0.85);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+.as-view--reports .as-card--reports-header .as-card__title {
+    color: #ffffff;
+}
+
+/* Strong accent header band to hit ≥7:1 contrast against white text */
+.as-view--reports .as-reports-header-band {
+    background: #fa8903;
+    color: #ffffff;
+    padding: 6px 10px;
+    border-radius: 10px 10px 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Main card container for two-panel layout */
+.as-view--reports .as-card--reports-main {
+    background: #111315;
+}
+
+/* Main layout: sidebar (list) + detail (right) */
+.as-reports-layout {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+/* Left: sidebar (list, filters, tabs) */
+.as-reports-sidebar {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 44%;
+    min-width: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Right: detail panel */
+.as-reports-detail {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-left: 12px;
+}
+
+/* Sidebar header (title + search + refresh) */
+.as-reports-sidebar__header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.as-reports-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Basic input styling for search bar (if not already global) */
+.as-reports-sidebar .as-input {
+    min-width: 0;
+    flex: 1 1 auto;
+    height: 26px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: #1d2022;
+    color: #ffffff;
+    font-size: 12px;
+    outline: none;
+}
+
+.as-reports-sidebar .as-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.as-reports-sidebar .as-input:focus {
+    border-color: #fa8903;
+}
+
+/* Tabs row */
+.as-reports-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 8px 10px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 4px;
+}
+
+.as-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 100ms ease-out, border-color 100ms ease-out,
+        color 80ms ease-out;
+}
+
+.as-tab__badge {
+    min-width: 18px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 10px;
+    text-align: center;
+}
+
+.as-tab:hover {
+    background: rgba(250, 137, 3, 0.08);
+    border-color: rgba(250, 137, 3, 0.5);
+    color: #ffffff;
+}
+
+.as-tab--active {
+    background: rgba(250, 137, 3, 0.26);
+    border-color: #fa8903;
+    color: #ffffff;
+}
+
+.as-tab--active .as-tab__badge {
+    background: rgba(0, 0, 0, 0.28);
+}
+
+/* List wrapper inside sidebar */
+.as-reports-list-wrapper {
+    margin-top: 4px;
+    max-height: 320px;
+    overflow: auto;
+}
+
+/* Status badges (unchanged from prior version) */
+
+.as-report-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.as-report-status--open {
+    background: rgba(0, 200, 110, 0.24);
+    color: #baffd8;
+}
+
+.as-report-status--claimed {
+    background: rgba(250, 137, 3, 0.22);
+    color: #ffe3c0;
+}
+
+.as-report-status--closed {
+    background: rgba(140, 140, 140, 0.35);
+    color: #f0f0f0;
+}
+
+/* Report list */
+
+.as-reports-list {
+    max-height: 100%;
+    overflow: auto;
+    margin-top: 4px;
+}
+
+.as-reports-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 100ms ease-out, transform 80ms ease-out,
+        box-shadow 80ms ease-out;
+}
+
+.as-reports-list-item:hover {
+    background: rgba(250, 137, 3, 0.12);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Active/selected state in list */
+.as-reports-list-item--active {
+    background: rgba(250, 137, 3, 0.22);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+}
+
+.as-reports-list-item__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.as-reports-list-item__title {
+    font-size: 12px;
+    color: #ffffff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.as-reports-list-item__subtitle {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.as-reports-list-item__right {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+/* Detail panel */
+
+.as-reports-detail__header-main {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.as-reports-detail__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 12px;
+}
+
+.as-reports-detail__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+/* Meta strip (Reporter, Reported Player, Category, etc.) */
+.as-reports-detail__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 8px 0 10px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.as-reports-detail__meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.as-reports-detail__meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.as-reports-detail__meta-value {
+    font-size: 12px;
+    color: #ffffff;
+    word-break: break-word;
+}
+
+/* Detail body */
+.as-reports-detail__body {
+    margin-top: 8px;
+}
+
+.as-reports-detail__section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+}
+
+.as-reports-detail__message {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.4;
+}
+
+.as-muted {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/*========================================
+  Responsive / narrow width adjustments
+========================================*/
+
+@media (max-width: 1180px) {
+    .as-reports-layout {
+        flex-direction: column;
+    }
+
+    .as-reports-sidebar {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 8px;
+    }
+
+    .as-reports-detail {
+        padding-left: 0;
+        padding-top: 6px;
+    }
+
+    .as-reports-detail__meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .as-reports-detail__meta {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/*========================================
+  Player /report overlay
+  (unchanged from prior implementation)
+========================================*/
+
+.as-player-report-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    font-family: inherit;
+}
+
+.as-player-report-overlay.hidden {
+    display: none;
+}
+
+.as-player-report-dialog {
+    width: 420px;
+    max-width: 95%;
+    background: #1d2022;
+    border-radius: 12px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(250, 137, 3, 0.85);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.as-player-report-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #111315;
+    border-bottom: 1px solid rgba(250, 137, 3, 0.6);
+}
+
+.as-player-report-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.as-player-report-title h2 {
+    margin: 0;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.as-player-report-title p {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.as-player-report-body {
+    padding: 12px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.as-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.as-form-group label,
+.as-form-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.as-player-report-body input[type="text"],
+.as-player-report-body textarea {
+    background: #111315;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 6px 8px;
+    font-size: 13px;
+    color: #ffffff;
+    outline: none;
+}
+
+.as-player-report-body input[type="text"]:focus,
+.as-player-report-body textarea:hover,
+.as-player-report-body textarea:focus {
+    border-color: #fa8903;
+}
+
+.as-radio-row {
+    display: flex;
+    gap: 12px;
+}
+
+.as-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.as-radio input[type="radio"] {
+    accent-color: #fa8903;
+}
+
+.as-player-report-footer {
+    padding: 10px 16px 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background: #111315;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Basic button styles reusing AdminSuite tones */
+
+/* Basic button styles for buttons inside the player /report dialog only */
+
+.as-player-report-footer .as-btn {
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    color: #ffffff;
+}
+
+
+.as-btn--ghost {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: transparent;
+}
+
+.as-btn--ghost:hover {
+    border-color: #fa8903;
+}
+
+.as-btn--primary {
+    background: #fa8903;
+    border-color: #fa8903;
+    color: #1d2022;
+    font-weight: 600;
+}
+
+.as-btn--primary:hover {
+    filter: brightness(1.07);
+}

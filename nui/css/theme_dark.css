@@ -1,0 +1,47 @@
+body.theme-dark {
+    /* Root backgrounds */
+    --as-bg: #020617;
+    --as-bg-elevated: #020617;
+
+    /* Big background gradients used by main.css */
+    --as-body-bg: radial-gradient(circle at top left, #0b1020 0, #020314 40%, #000000 100%);
+    --as-root-bg: radial-gradient(circle at top left, rgba(30, 64, 175, 0.18), rgba(8, 47, 73, 0.26), rgba(15, 23, 42, 0.96));
+    --as-shell-bg: radial-gradient(circle at top right, rgba(56, 189, 248, 0.15), rgba(15, 23, 42, 1));
+    --as-nav-bg: radial-gradient(circle at top, #020617 0, #020617 30%, #020617 100%);
+    --as-header-bg: radial-gradient(circle at top right, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.96));
+    --as-footer-bg: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 1));
+
+    /* Card / surface styling */
+    --as-card-bg: rgba(15, 23, 42, 0.96);
+    --as-card-border: rgba(148, 163, 184, 0.35);
+    --as-card-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+
+    /* Text colors */
+    --as-text: #e5e7eb;
+    --as-text-muted: rgba(148, 163, 184, 0.95);
+
+    /* Accent colors */
+    --as-accent: #f97316;
+    --as-accent-soft: #38bdf8;
+
+    
+
+    /* Accent colors (rgb helpers for older CEF) */
+    --as-accent-rgb: 249, 115, 22;
+    --as-accent-soft-rgb: 56, 189, 248;
+/* Borders */
+    --as-border-subtle: rgba(148, 163, 184, 0.25);
+
+    /* Inputs / chips / subtle fills */
+    --as-input-bg: rgba(15, 23, 42, 0.9);
+    --as-input-border: rgba(148, 163, 184, 0.5);
+    --as-pill-bg: rgba(15, 23, 42, 0.95);
+
+    /* Scrollbar */
+    --as-scrollbar-track: rgba(15, 23, 42, 0.9);
+    --as-scrollbar-thumb: rgba(148, 163, 184, 0.8);
+
+    /* Watermark */
+    --as-watermark-image: url("../img/dark_bg.png");
+    --as-watermark-opacity: 0.08;
+}
