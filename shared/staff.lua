@@ -71,6 +71,7 @@ AS.Staff.Roles = {
             can_manage_docs         = true,
             can_view_audit          = true,
             can_flush_cache         = true,
+            can_screenshot          = true,
 
             -- Resources
             can_view_resources    = true,
@@ -152,6 +153,7 @@ AS.Staff.Roles = {
             can_manage_docs         = true,
             can_view_audit          = false,
             can_flush_cache         = false,
+            can_screenshot          = true,
 
             -- Resources (strong admin, but not full like god)
             can_view_resources    = true,
@@ -233,6 +235,7 @@ AS.Staff.Roles = {
             can_manage_docs         = false,
             can_view_audit          = false,
             can_flush_cache         = false,
+            can_screenshot          = true,
 
             -- Resources
             can_view_resources    = false,
@@ -315,6 +318,7 @@ AS.Staff.Roles = {
             can_manage_docs         = false,
             can_view_audit          = false,
             can_flush_cache         = false,
+            can_screenshot          = false,
 
             -- Resources
             can_view_resources    = false,
@@ -397,6 +401,7 @@ AS.Staff.Roles = {
             can_manage_docs         = true,
             can_view_audit          = true,
             can_flush_cache         = true,
+            can_screenshot          = false,
 
             -- Resources (conservative: no resource control by default)
             can_view_resources    = true,

@@ -69,6 +69,10 @@ window.AdminSuite = window.AdminSuite || {};
             giveItem: "can_give_item",
             removeItem: "can_take_item",
 
+            //Screenshot Player
+            screenshot: "can_screenshot_player",
+
+
             // Economy
             giveMoney: "can_give_money",
             takeMoney: "can_take_money",

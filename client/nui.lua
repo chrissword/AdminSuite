@@ -327,6 +327,10 @@ RegisterNUICallback('as:nui:dashboard:runQuickAction', function(data, cb)
 
         elseif id == 'super-jump' then
             superJumpEnabled = not superJumpEnabled
+
+            if Events and Events.Audit and Events.Audit.Append then
+                TriggerServerEvent(Events.Audit.Append, 'self:super-jump', getSelfServerId(), { enabled = superJumpEnabled })
+            end
             Utils.Notify(
                 ('Super Jump: %s'):format(superJumpEnabled and 'On' or 'Off'),
                 superJumpEnabled and 'success' or 'error'
@@ -334,6 +338,10 @@ RegisterNUICallback('as:nui:dashboard:runQuickAction', function(data, cb)
 
         elseif id == 'fast-run' then
             fastRunEnabled = not fastRunEnabled
+
+            if Events and Events.Audit and Events.Audit.Append then
+                TriggerServerEvent(Events.Audit.Append, 'self:fast-run', getSelfServerId(), { enabled = fastRunEnabled })
+            end
             Utils.Notify(
                 ('Fast Run: %s'):format(fastRunEnabled and 'On' or 'Off'),
                 fastRunEnabled and 'success' or 'error'
@@ -341,6 +349,10 @@ RegisterNUICallback('as:nui:dashboard:runQuickAction', function(data, cb)
 
         elseif id == 'infinite-stamina' then
             infiniteStaminaEnabled = not infiniteStaminaEnabled
+
+            if Events and Events.Audit and Events.Audit.Append then
+                TriggerServerEvent(Events.Audit.Append, 'self:infinite-stamina', getSelfServerId(), { enabled = infiniteStaminaEnabled })
+            end
             Utils.Notify(
                 ('Infinite Stamina: %s'):format(infiniteStaminaEnabled and 'On' or 'Off'),
                 infiniteStaminaEnabled and 'success' or 'error'
@@ -348,6 +360,10 @@ RegisterNUICallback('as:nui:dashboard:runQuickAction', function(data, cb)
 
         elseif id == 'god-mode' then
             godModeEnabled = not godModeEnabled
+
+            if Events and Events.Audit and Events.Audit.Append then
+                TriggerServerEvent(Events.Audit.Append, 'self:god-mode', getSelfServerId(), { enabled = godModeEnabled })
+            end
             Utils.Notify(
                 ('God Mode: %s'):format(godModeEnabled and 'On' or 'Off'),
                 godModeEnabled and 'success' or 'error'
@@ -481,7 +497,8 @@ RegisterNUICallback('as:nui:dashboard:runQuickAction', function(data, cb)
         if id == 'spawn' then
             if Events.VehicleTools and Events.VehicleTools.Spawn then
                 -- Server controls RBAC + audit + instructs client to spawn
-                TriggerServerEvent(Events.VehicleTools.Spawn, {})
+                local defaultModel = ((AS.Config and AS.Config.VehicleTools and AS.Config.VehicleTools.DefaultModel) or 'adder')
+                TriggerServerEvent(Events.VehicleTools.Spawn, { model = defaultModel })
                 if Utils and Utils.Notify then
                     Utils.Notify('Requested vehicle spawn.')
                 end
@@ -730,6 +747,13 @@ RegisterNUICallback('as:nui:moderation:executeAction', function(data, cb)
         local account = (extra.account or 'cash'):lower()
         local amount  = tonumber(extra.amount) or 0
         TriggerServerEvent(Events.Moderation.TakeMoney, target, account, amount)
+
+
+        ------------------------------------------------
+        -- Evidence
+        ------------------------------------------------
+    elseif action == 'screenshot' and Events.Moderation.Screenshot then
+        TriggerServerEvent(Events.Moderation.Screenshot, target)
 
     ------------------------------------------------
     -- Inventory

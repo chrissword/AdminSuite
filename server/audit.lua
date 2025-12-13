@@ -8,6 +8,73 @@ local Persistence = AS.Persistence
 local Config      = AS.Config or Config
 local Events      = AS.Events
 
+
+---------------------------------------------------------------------
+-- Discord Webhook helper (optional)
+---------------------------------------------------------------------
+
+local function safeJson(v)
+    local ok, out = pcall(function() return json.encode(v or {}) end)
+    if ok then return out end
+    return '{}'
+end
+
+local function postWebhook(url, payload)
+    if not url or url == '' then return end
+    if type(PerformHttpRequest) ~= 'function' then return end
+
+    PerformHttpRequest(url, function() end, 'POST', json.encode(payload), {
+        ['Content-Type'] = 'application/json'
+    })
+end
+
+local function pickWebhook(eventName)
+    local hooks = Config and Config.Integrations and Config.Integrations.Webhooks or {}
+    local prefix = tostring(eventName or ''):match('^([^:]+)') or ''
+
+    if prefix == 'screenshot' then
+        return hooks.Screenshots or hooks.Audit
+    elseif prefix == 'moderation' then
+        return hooks.Moderation or hooks.Audit
+    elseif prefix == 'vehicle' or prefix == 'items' then
+        return hooks.Spawns or hooks.Audit
+    elseif prefix == 'self' then
+        return hooks.Self or hooks.Audit
+    else
+        return hooks.Audit
+    end
+end
+
+local function sendAuditWebhook(entry)
+    local url = pickWebhook(entry and entry.event_name)
+    if not url or url == '' then return end
+
+    local actor  = tostring(entry.actor_identifier or 'unknown')
+    local target = entry.target_identifier and tostring(entry.target_identifier) or 'n/a'
+    local name   = tostring(entry.event_name or 'audit')
+
+    local embed = {
+        title = ('AdminSuite • %s'):format(name),
+        fields = {
+            { name = 'Actor', value = actor, inline = true },
+            { name = 'Target', value = target, inline = true },
+        },
+        footer = { text = 'AdminSuite Audit' },
+        timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ', tonumber(entry.created_at or os.time()) or os.time()),
+    }
+
+    local payloadJson = safeJson(entry.payload or {})
+    if payloadJson and #payloadJson > 2 then
+        -- keep within Discord embed limits
+        if #payloadJson > 900 then
+            payloadJson = payloadJson:sub(1, 900) .. '...'
+        end
+        table.insert(embed.fields, { name = 'Payload', value = ('```json\n%s\n```'):format(payloadJson), inline = false })
+    end
+
+    postWebhook(url, { embeds = { embed } })
+end
+
 AS.Audit.Cache = AS.Audit.Cache or {}
 
 --========================================

@@ -14,15 +14,99 @@ end
 -- Helpers
 --========================================
 
+local function staffMsg(src, msg)
+    TriggerClientEvent('chat:addMessage', src, {
+        args = { '^8AdminSuite', tostring(msg or '') }
+    })
+end
+
 local function requireFlag(src, flag)
-    local ok, roleName = RBAC.Can(src, flag)
+    if not RBAC or not RBAC.Can then
+        staffMsg(src, 'RBAC not available; cannot verify permissions.')
+        return false
+    end
+
+    local ok = RBAC.Can(src, flag)
     if not ok then
-        TriggerClientEvent('chat:addMessage', src, {
-            args = { '^8AdminSuite', ('You do not have permission (%s) for this action.'):format(flag) }
-        })
+        staffMsg(src, ('You do not have permission (%s) for this action.'):format(flag))
         return false
     end
     return true
+end
+
+local function isStaff(src)
+    return RBAC and RBAC.IsStaff and RBAC.IsStaff(src)
+end
+
+local function getScreenshotsWebhook()
+    local hooks = Config and Config.Integrations and Config.Integrations.Webhooks or {}
+    return tostring(hooks.Screenshots or '')
+end
+
+-- Simple base64 decode (works for Discord file upload)
+local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+local b64lookup = {}
+for i = 1, #b64chars do
+    b64lookup[b64chars:sub(i, i)] = i - 1
+end
+
+local function base64Decode(data)
+    if not data or data == '' then return '' end
+    data = data:gsub('%s', ''):gsub('=+$', '')
+    local out = {}
+    local buffer = 0
+    local bits = 0
+
+    for i = 1, #data do
+        local c = data:sub(i, i)
+        local v = b64lookup[c]
+        if v ~= nil then
+            buffer = (buffer << 6) | v
+            bits = bits + 6
+            if bits >= 8 then
+                bits = bits - 8
+                local byte = (buffer >> bits) & 0xFF
+                out[#out + 1] = string.char(byte)
+            end
+        end
+    end
+
+    return table.concat(out)
+end
+
+local function postDiscordWebhookMultipart(webhookUrl, payloadTable, fileFieldName, fileName, fileBytes)
+    local boundary = '----AdminSuiteBoundary' .. tostring(math.random(100000, 999999)) .. tostring(os.time())
+
+    local payloadJson = json.encode(payloadTable or {})
+
+    local CRLF = '\r\n'
+    local parts = {}
+
+    -- payload_json part
+    parts[#parts + 1] = '--' .. boundary .. CRLF
+    parts[#parts + 1] = 'Content-Disposition: form-data; name="payload_json"' .. CRLF
+    parts[#parts + 1] = 'Content-Type: application/json' .. CRLF .. CRLF
+    parts[#parts + 1] = payloadJson .. CRLF
+
+    -- file part
+    parts[#parts + 1] = '--' .. boundary .. CRLF
+    parts[#parts + 1] = ('Content-Disposition: form-data; name="%s"; filename="%s"'):format(fileFieldName, fileName) .. CRLF
+    parts[#parts + 1] = 'Content-Type: image/jpeg' .. CRLF .. CRLF
+    parts[#parts + 1] = fileBytes .. CRLF
+
+    -- end boundary
+    parts[#parts + 1] = '--' .. boundary .. '--' .. CRLF
+
+    local body = table.concat(parts)
+
+    PerformHttpRequest(webhookUrl, function(code, respBody, headers)
+        print(('[AdminSuite] Discord webhook response code=%s'):format(tostring(code)))
+        if code ~= 200 and code ~= 204 then
+            print('[AdminSuite] Discord response body:', tostring(respBody))
+        end
+    end, 'POST', body, {
+        ['Content-Type'] = ('multipart/form-data; boundary=%s'):format(boundary)
+    })
 end
 
 --========================================
@@ -31,7 +115,7 @@ end
 
 RegisterNetEvent(Events.Moderation.GetPlayers, function()
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     local list = Players.GetPlayersSnapshot()
     TriggerClientEvent(Events.Moderation.GetPlayers, src, list)
@@ -39,7 +123,7 @@ end)
 
 RegisterNetEvent(Events.Moderation.GetPlayerDetail, function(targetSrc)
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     local detail = Players.GetPlayerDetail(tonumber(targetSrc))
     TriggerClientEvent(Events.Moderation.GetPlayerDetail, src, detail)
@@ -82,7 +166,7 @@ RegisterNetEvent(Events.Moderation.Ban, function(targetSrcOrIdentifier, reason, 
     local src = source
     durationSeconds = tonumber(durationSeconds) or 0
 
-    local flag = durationSeconds == 0 and 'can_ban_perm' or 'can_ban_temp'
+    local flag = (durationSeconds == 0) and 'can_ban_perm' or 'can_ban_temp'
     if not requireFlag(src, flag) then return end
 
     Players.Ban(src, targetSrcOrIdentifier, reason, durationSeconds)
@@ -99,19 +183,14 @@ end)
 -- BANNED PLAYERS PANEL (NEW)
 --========================================
 
--- Load ban list for Banned Players NUI panel
 RegisterNetEvent(Events.NUI.BannedPlayersLoad or 'as:nui:bannedplayers:load', function()
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     local bans = Players.GetAllBans() or {}
-
-    TriggerClientEvent(Events.NUI.BannedPlayersLoad or 'as:nui:bannedplayers:load', src, {
-        bans = bans
-    })
+    TriggerClientEvent(Events.NUI.BannedPlayersLoad or 'as:nui:bannedplayers:load', src, { bans = bans })
 end)
 
--- Unban via Banned Players panel
 RegisterNetEvent(Events.NUI.BannedPlayersUnban or 'as:nui:bannedplayers:unban', function(payload)
     local src = source
     if not requireFlag(src, 'can_ban_perm') then return end
@@ -123,18 +202,17 @@ RegisterNetEvent(Events.NUI.BannedPlayersUnban or 'as:nui:bannedplayers:unban', 
     local existing = Players.GetBanById(targetId)
     if not existing then return end
 
-    -- Use the logical target_identifier in the bans table for the actual unban
     Players.Unban(src, existing.target_identifier)
 
-    Audit.Log(src, targetId, 'moderation:unban', {
-        reason = "Unban from Banned Players Panel",
-        ban    = existing
-    })
+    if Audit and Audit.Log then
+        Audit.Log(src, targetId, 'moderation:unban', {
+            reason = "Unban from Banned Players Panel",
+            ban    = existing
+        })
+    end
 
     local bans = Players.GetAllBans() or {}
-    TriggerClientEvent(Events.NUI.BannedPlayersLoad or 'as:nui:bannedplayers:load', src, {
-        bans = bans
-    })
+    TriggerClientEvent(Events.NUI.BannedPlayersLoad or 'as:nui:bannedplayers:load', src, { bans = bans })
 end)
 
 --========================================
@@ -146,13 +224,10 @@ do
 
     RegisterNetEvent(noclipEvent, function()
         local src = source
-
         if not requireFlag(src, 'can_noclip') then return end
 
         if Audit and Audit.Log then
-            Audit.Log(src, src, 'moderation:noclip', {
-                action = 'toggle',
-            })
+            Audit.Log(src, src, 'moderation:noclip', { action = 'toggle' })
         end
 
         TriggerClientEvent(noclipEvent, src)
@@ -165,7 +240,7 @@ end
 
 RegisterNetEvent(Events.Moderation.Message, function(targetSrc, message)
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     targetSrc = tonumber(targetSrc)
     if not targetSrc then return end
@@ -174,9 +249,9 @@ RegisterNetEvent(Events.Moderation.Message, function(targetSrc, message)
         args = { '^8AdminSuite', tostring(message or '') }
     })
 
-    Audit.Log(src, targetSrc, 'moderation:message', {
-        message = message,
-    })
+    if Audit and Audit.Log then
+        Audit.Log(src, targetSrc, 'moderation:message', { message = message })
+    end
 end)
 
 --========================================
@@ -225,7 +300,7 @@ end)
 
 RegisterNetEvent(Events.Moderation.ViewInventory, function(targetSrc)
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     targetSrc = tonumber(targetSrc)
     if not targetSrc then return end
@@ -233,15 +308,94 @@ RegisterNetEvent(Events.Moderation.ViewInventory, function(targetSrc)
     Players.ViewInventory(src, targetSrc)
 end)
 
+-------------------------------------------------
+-- Screenshot Player (works with your screenshot-basic build)
+-- screenshot-basic export available: requestClientScreenshot
+-------------------------------------------------
+RegisterNetEvent(Events.Moderation.Screenshot, function(targetSrc)
+    local src = source
+    targetSrc = tonumber(targetSrc or 0)
+    if not targetSrc or targetSrc <= 0 then return end
+
+    -- RBAC: allow either flag name
+    local ok1 = RBAC and RBAC.Can and RBAC.Can(src, 'can_screenshot_player') or false
+    local ok2 = RBAC and RBAC.Can and RBAC.Can(src, 'can_screenshot') or false
+
+    if not ok1 and not ok2 then
+        staffMsg(src, 'You do not have permission to screenshot players.')
+        return
+    end
+
+    if GetResourceState('screenshot-basic') ~= 'started' then
+        staffMsg(src, 'screenshot-basic is not started. Install/start it to use screenshots.')
+        return
+    end
+
+    local webhook = getScreenshotsWebhook()
+    if webhook == '' then
+        print('[AdminSuite] Screenshot: webhook is EMPTY at Config.Integrations.Webhooks.Screenshots')
+        staffMsg(src, 'Screenshots webhook URL is not configured in config.lua.')
+        return
+    end
+
+    -- Capture screenshot from target
+    exports['screenshot-basic']:requestClientScreenshot(targetSrc, { encoding = 'jpg', quality = 0.85 }, function(err, data)
+        if err then
+            print('[AdminSuite] Screenshot capture error:', err)
+            staffMsg(src, 'Screenshot failed (capture error). Check server console.')
+            return
+        end
+
+        if not data or type(data) ~= 'string' or data == '' then
+            print('[AdminSuite] Screenshot capture returned empty data')
+            staffMsg(src, 'Screenshot failed (empty data).')
+            return
+        end
+
+        -- data URL -> raw base64
+        local b64 = data:gsub('^data:image/%w+;base64,', '')
+        local bytes = base64Decode(b64)
+
+        if not bytes or bytes == '' then
+            print('[AdminSuite] Screenshot decode produced empty bytes')
+            staffMsg(src, 'Screenshot failed (decode error).')
+            return
+        end
+
+        local staffName  = GetPlayerName(src) or ('ID ' .. tostring(src))
+        local targetName = GetPlayerName(targetSrc) or ('ID ' .. tostring(targetSrc))
+
+        -- Discord will show attachment automatically; no embed required
+        local payload = {
+            content = ('📸 Screenshot requested by **%s** | Target: **%s** (ID %s)'):format(
+                staffName,
+                targetName,
+                tostring(targetSrc)
+            )
+        }
+
+        -- Upload to Discord webhook (multipart)
+        postDiscordWebhookMultipart(webhook, payload, 'files[0]', 'screenshot.jpg', bytes)
+
+        if Audit and Audit.Log then
+            Audit.Log(src, targetSrc, 'screenshot:player', {
+                ok = true,
+                staff = staffName,
+                target = targetName
+            })
+        end
+
+        staffMsg(src, 'Screenshot captured and sent to Discord.')
+    end)
+end)
+
 --========================================
 -- Player Settings
 --========================================
 
-local Config = AS.Config or Config
-
 RegisterNetEvent(Events.Settings.GetPlayerSettings, function(targetSrc)
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     targetSrc = tonumber(targetSrc)
     if not targetSrc then return end
@@ -282,7 +436,6 @@ RegisterNetEvent(Events.Settings.SetGang, function(targetSrc, gangName, grade)
     end
 end)
 
--- Staff role / whitelist management
 RegisterNetEvent(Events.Settings.SetStaffRole, function(targetSrc, value)
     local src = source
     if not requireFlag(src, 'can_manage_staff_roles') then return end
@@ -291,21 +444,14 @@ RegisterNetEvent(Events.Settings.SetStaffRole, function(targetSrc, value)
     if not targetSrc then return end
 
     if type(value) == 'boolean' then
-        --------------------------------------------------
-        -- Legacy behavior: toggle QBCore-style whitelist
-        --------------------------------------------------
         Players.SetWhitelist(src, targetSrc, value)
     else
-        --------------------------------------------------
-        -- New behavior: Add / Update Admin (staff role)
-        --------------------------------------------------
         local roleName = tostring(value or ''):lower()
         if roleName == '' then return end
 
         local staff = AS.Staff or {}
         local roles = staff.Roles or {}
         if not roles[roleName] then
-            -- Unknown role; do nothing
             return
         end
 
@@ -316,7 +462,6 @@ RegisterNetEvent(Events.Settings.SetStaffRole, function(targetSrc, value)
                 break
             end
         end
-
         if not licenseId then return end
 
         if staff.AddOrUpdateMapping then
@@ -340,7 +485,6 @@ RegisterNetEvent(Events.Settings.SetStaffRole, function(targetSrc, value)
     end
 end)
 
--- Remove Admin (clear staff role for this player's license)
 RegisterNetEvent(Events.Settings.ClearStaffRole, function(targetSrc)
     local src = source
     if not requireFlag(src, 'can_manage_staff_roles') then return end
@@ -358,7 +502,6 @@ RegisterNetEvent(Events.Settings.ClearStaffRole, function(targetSrc)
             break
         end
     end
-
     if not licenseId then return end
 
     if staff.RemoveMapping then
@@ -368,9 +511,7 @@ RegisterNetEvent(Events.Settings.ClearStaffRole, function(targetSrc)
     end
 
     if Audit and Audit.Log then
-        Audit.Log(src, targetSrc, 'settings:removeAdmin', {
-            identifier = licenseId,
-        })
+        Audit.Log(src, targetSrc, 'settings:removeAdmin', { identifier = licenseId })
     end
 
     local payload = Players.GetPlayerSettings(targetSrc)
@@ -379,11 +520,9 @@ RegisterNetEvent(Events.Settings.ClearStaffRole, function(targetSrc)
     end
 end)
 
-
-
 RegisterNetEvent(Events.Settings.OpenClothing, function(targetSrc)
     local src = source
-    if not RBAC.IsStaff(src) then return end
+    if not isStaff(src) then return end
 
     targetSrc = tonumber(targetSrc)
     if not targetSrc then return end
@@ -396,7 +535,7 @@ RegisterNetEvent(Events.Settings.OpenClothing, function(targetSrc)
         TriggerClientEvent('illenium-appearance:client:openClothingShopMenu', targetSrc, {})
     end
 
-    Audit.Log(src, targetSrc, 'settings:openClothing', {
-        integration = integration
-    })
+    if Audit and Audit.Log then
+        Audit.Log(src, targetSrc, 'settings:openClothing', { integration = integration })
+    end
 end)

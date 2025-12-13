@@ -1998,6 +1998,39 @@ body.theme-light .as-settings-row-help {
     color: var(--as-text-muted, rgba(55, 65, 81, 0.86));
 }
 
+/* =========================================================
+   Admin Settings – Appearance (Light/Dark pills)
+   Active pill highlight
+   ========================================================= */
+
+.as-settings-pill.as-settings-pill--active {
+    position: relative;
+    transform: translateY(-1px);
+    border-color: var(--as-accent, #8b5cf6);
+    box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--as-accent, #8b5cf6) 28%, transparent),
+        0 10px 22px color-mix(in srgb, var(--as-accent, #8b5cf6) 18%, transparent);
+}
+
+.as-settings-pill.as-settings-pill--active::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--as-accent, #8b5cf6) 22%, transparent),
+        transparent 60%
+    );
+    pointer-events: none;
+}
+
+.as-settings-pill.as-settings-pill--active .as-settings-pill__label,
+.as-settings-pill.as-settings-pill--active .as-settings-pill__icon {
+    color: var(--as-text, #f8fafc);
+}
+
+
 /* Slider toggle bound to the real <input type="checkbox"> */
 
 .as-toggle {

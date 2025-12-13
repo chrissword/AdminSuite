@@ -116,6 +116,9 @@ AS.Events.Moderation = {
     TakeMoney        = 'as:moderation:takeMoney',
 
     ViewInventory    = 'as:moderation:viewInventory',
+
+    Screenshot       = 'as:moderation:screenshot',
+
 }
 
 --=====================================================

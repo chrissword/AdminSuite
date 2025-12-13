@@ -23,6 +23,19 @@ Config.Namespace = 'as'
 Config.SkinIntegration = 'qb-clothing'
 
 --=====================================================
+--  Default Vehicle Spawn Model
+--=====================================================
+
+--=====================================================
+--  Default Vehicle Spawn Model
+--=====================================================
+
+Config.VehicleTools = Config.VehicleTools or {}
+Config.VehicleTools.DefaultModel = 'adder' -- change to what you want
+
+
+
+--=====================================================
 --  BRANDING & IDENTITY
 --=====================================================
 
@@ -39,12 +52,18 @@ Config.Branding.ServerDiscord  = 'https://discord.gg/yourdiscord'
 --=====================================================
 
 Config.Integrations.Webhooks = {
-    Screenshots = '', -- Screenshot webhook (e.g. for evidence)
-    Bans        = '',
-    Reports     = '',
-    Audit       = '',
-    AdminChat   = '',
+  Screenshots = 'https://discord.com/api/webhooks/1449228472022208712/d9YyW3Nb7DhFY3WWh_hGCAWo-bUIjPZBpyoEfYML18uTmpS-zIutvo9q2AcivsRWv_01',
+  Bans        = '',
+  Reports     = '',
+  Audit       = '',
+  AdminChat   = '',
+
+  Moderation  = '', -- kick/warn/ban/message
+  Economy     = '', -- give/take money
+  Spawns      = '', -- vehicle spawn / item spawn
+  Self        = '', -- godmode/superjump/fastrun/stamina toggles
 }
+
 
 --=====================================================
 --  THEME DEFAULTS
