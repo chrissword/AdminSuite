@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-dark">
 <head>
-    <meta charset="UTF-8" />
-    <title>AdminSuite Panel</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>AdminSuite Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Core layout & typography -->
-    <link rel="stylesheet" href="./css/main.css" />
+  <!-- Theme tokens -->
+  <link rel="stylesheet" href="./css/theme_dark.css" />
+  <link rel="stylesheet" href="./css/theme_light.css" />
 
-    <!-- Theme tokens -->
-    <link rel="stylesheet" href="./css/theme_dark.css" />
-    <link rel="stylesheet" href="./css/theme_light.css" />
+  <!-- Reports-specific styling -->
+  <link rel="stylesheet" href="./css/reports.css" />
 
-    <!-- Reports-specific styling -->
-    <link rel="stylesheet" href="./css/reports.css" />
+  <!-- Core layout & typography (LOAD LAST so it wins) -->
+  <link rel="stylesheet" href="./css/main.css" />
+
+  <!-- NUCLEAR: force transparent page (kills black corners) -->
+  <style>
+    html, body {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+    }
+  </style>
 </head>
 
 <body class="theme-dark" data-panel-open="false">
+
     <div id="adminsuite-root" class="as-root hidden">
 
         <!-- Sidebar Navigation -->

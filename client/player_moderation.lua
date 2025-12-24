@@ -299,6 +299,12 @@ RegisterNetEvent('AdminSuite:moderation:viewInventory', function(data)
         print(('[AdminSuite] viewInventory fired (system=%s, target=%s)'):format(tostring(system), tostring(target)))
     end
 
+    -- ======================================================
+    -- UPDATED: Only fire ONE open-inventory event.
+    -- (Previously this fired 2-3 events, which can cause
+    --  inventory resync conflicts / duplication symptoms.)
+    -- ======================================================
+
     if system == 'qb-inventory' or system == 'qs-inventory' or system == 'ps-inventory' then
         local customEvt = invCfg.OpenTargetInventoryEvent
         if customEvt and customEvt ~= '' then
@@ -309,11 +315,13 @@ RegisterNetEvent('AdminSuite:moderation:viewInventory', function(data)
             return
         end
 
-        if qbinv then
-            TriggerServerEvent('qb-inventory:server:openInventory', 'otherplayer', target)
+        -- Prefer the most common/modern qb event name when qb/ps/qs style is in use.
+        if qbinv or qsinv or psinv then
             TriggerServerEvent('qb-inventory:server:OpenInventory', 'otherplayer', target)
+            return
         end
 
+        -- Absolute fallback: only if you truly rely on a generic inventory resource.
         TriggerServerEvent('inventory:server:OpenInventory', 'otherplayer', target)
 
     elseif system == 'ox_inventory' or system == 'ox-inventory' then
